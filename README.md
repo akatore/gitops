@@ -67,8 +67,10 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
   If you haven't changed it yet, get the auto-generated password:                                                                                                                                                          
                                                                                                                                                                                                                            
    1 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d                                                                                                                   
-                                                                                                             
+
+```                                                                                                             
 ----
+
 
 ```shell
 ✦ Since you are using Google Cloud Shell, you can access the Argo CD UI using the Web Preview feature:                                                                                                                     

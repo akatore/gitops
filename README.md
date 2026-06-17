@@ -17,6 +17,7 @@ kubectl get nodes
 kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
+```
 ```shell
 ----
 ✦ Here is a summary of the steps we took to access Argo CD from Google Cloud Shell, including the technical reasons for each action. You can copy this into your README.md.

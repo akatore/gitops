@@ -18,6 +18,23 @@ kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 ```
+---
+### Argo CD CLI
+The Argo CD CLI (`argocd`) has been installed for managing Kubernetes applications via GitOps.
+
+**Installation Command:**
+```bash
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+```
+
+To verify the installation:
+```bash
+argocd version --client
+```
+---
+
 ```shell
 ----
 ✦ Here is a summary of the steps we took to access Argo CD from Google Cloud Shell, including the technical reasons for each action. You can copy this into your README.md.

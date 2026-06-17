@@ -19,6 +19,16 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
 
 ```
 ----
+✦ Here is a summary of the steps we took to access Argo CD from Google Cloud Shell, including the technical reasons for each action. You can copy this into your README.md.
+
+  ---
+  
+  Accessing Argo CD via Google Cloud Shell Web Preview                                   
+  This guide outlines the steps required to securely access the Argo CD UI when running in a Kubernetes cluster accessed via Google Cloud Shell.                                                                                                                                                                                                                                                   
+  1. Locate the Argo CD Service                                                                                                      
+  First, we identified the service name and the namespace where Argo CD was installed.                                                                                                                                                                                                                                                                                                                    
+   1 kubectl get svc -A | grep argocd-server                                                                                        
+   * Why: We needed to confirm the service name (argocd-server) and namespace (argocd) to target the correct resource for port-forwarding.                                                                                                                    
 
   2. Initial Port-Forwarding Attempt (HTTPS)                                                                                                                                                                               
   Initially, we tried forwarding to the secure port (443).                                                                                                                                                                 

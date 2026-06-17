@@ -18,6 +18,47 @@ kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 ```
+----
+
+  2. Initial Port-Forwarding Attempt (HTTPS)                                                                                                                                                                               
+  Initially, we tried forwarding to the secure port (443).                                                                                                                                                                 
+                                                                                                                                                                                                                           
+   1 kubectl port-forward svc/argocd-server -n argocd 8080:443                                                                                                                                                             
+   * Problem: This caused an ERR_TOO_MANY_REDIRECTS error.                                                                                                                                                                 
+   * Why: Google Cloud Shell's Web Preview uses its own proxy to provide an HTTPS URL. When the backend (Argo CD) also tries to enforce HTTPS/TLS, the two proxies conflict, resulting in an infinite redirect loop.       
+                                                                                                                                                                                                                           
+  3. Enable Insecure Mode in Argo CD                                                                                                                                                                                       
+  To resolve the redirect loop, we had to tell Argo CD to stop enforcing HTTPS internally, as the Cloud Shell proxy handles the encryption for us.                                                                         
+                                                                                                                                                                                                                           
+  Step A: Update the ConfigMap                                                                                                                                                                                             
+                                                                                                                                                                                                                           
+   1 kubectl patch cm argocd-cmd-params-cm -n argocd -p '{"data": {"server.insecure": "true"}}'                                                                                                                            
+   * Why: Setting server.insecure: "true" allows the argocd-server to serve plain HTTP traffic on port 8080 (container port).                                                                                              
+                                                                                                                                                                                                                           
+  Step B: Restart the Deployment                                                                                                                                                                                           
+                                                                                                                                                                                                                           
+   1 kubectl rollout restart deploy argocd-server -n argocd                                                                                                                                                                
+   2 kubectl rollout status deploy argocd-server -n argocd                                                                                                                                                                 
+   * Why: Changes to the ConfigMap require a restart of the Argo CD server pods to take effect.                                                                                                                            
+                                                                                                                                                                                                                           
+  4. Final Port-Forwarding (HTTP)                                                                                                                                                                                          
+  Now that Argo CD allows insecure connections, we forward the local Cloud Shell port 8080 to the service's HTTP port 80.                                                                                                  
+                                                                                                                                                                                                                           
+   1 kubectl port-forward svc/argocd-server -n argocd 8080:80                                                                                                                                                              
+   * Why: This setup allows the Cloud Shell Web Preview to successfully proxy your request to the Argo CD UI without triggering redirect loops.                                                                            
+                                                                                                                                                                                                                           
+  5. Access the UI                                                                                                                                                                                                         
+   1. Click the Web Preview button in the Cloud Shell toolbar.                                                                                                                                                             
+   2. Select Preview on port 8080.                                                                                                                                                                                         
+   3. Log in with the username admin.                                                                                                                                                                                      
+                                                                                                                                                                                                                           
+  6. Retrieve Initial Admin Password                                                                                                                                                                                       
+  If you haven't changed it yet, get the auto-generated password:                                                                                                                                                          
+                                                                                                                                                                                                                           
+   1 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d                                                                                                                   
+                                                                                                             
+----
+
 ```shell
 ✦ Since you are using Google Cloud Shell, you can access the Argo CD UI using the Web Preview feature:                                                                                                                     
                                                                                                                                                                                                                            
